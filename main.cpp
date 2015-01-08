@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <iostream>
-#include "sqr.h"
+#include "src/sqr.h"
 
 using namespace std;
 
