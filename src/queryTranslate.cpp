@@ -1,4 +1,3 @@
-#include <regex>
 #include <boost/regex.hpp>
 
 #include "queryTranslate.h"
