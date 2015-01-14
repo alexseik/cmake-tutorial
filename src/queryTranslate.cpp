@@ -46,7 +46,14 @@ bool acceptFieldsep(const std::string& input){
 bool isSeparator(char input){
 	std::string aux;
 	aux = aux + input;
-	static const boost::regex sep("[,;:]|[[:space:]]");
+	static const boost::regex sep("[,;:]|[[:blank:]]");
+	return boost::regex_match(aux, sep);
+}
+
+bool isInstructionSeparator(char input){
+	std::string aux;
+	aux = aux + input;
+	static const boost::regex sep("[[.vertical-line.]]|[[.newline.]]");
 	return boost::regex_match(aux, sep);
 }
 

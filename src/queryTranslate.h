@@ -21,4 +21,6 @@ bool acceptStartsep(const std::string& );
 
 bool isSeparator(char);
 
+bool isInstructionSeparator(char);
+
 #endif

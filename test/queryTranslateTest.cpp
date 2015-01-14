@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE(ReservedWords)
     BOOST_CHECK(!acceptOutfieldtypes(text2));    	
 }
 
-BOOST_AUTO_TEST_CASE(GetToken)
+BOOST_AUTO_TEST_CASE(TokenSeparators)
 {
 	//test on isSeparator
 	char tokenSep = ';';
@@ -61,6 +61,21 @@ BOOST_AUTO_TEST_CASE(GetToken)
 	BOOST_CHECK(!isSeparator(tokenSep));
 	tokenSep = '\n';
 	BOOST_CHECK(!isSeparator(tokenSep));
+}
+
+BOOST_AUTO_TEST_CASE(InstructionSeparators)
+{
+	//test on isSeparator
+	char tokenSep = '\n';
+	BOOST_CHECK(isInstructionSeparator(tokenSep));
+	tokenSep = '|';
+	BOOST_CHECK(isInstructionSeparator(tokenSep));
+	tokenSep = ':';
+	BOOST_CHECK(!isInstructionSeparator(tokenSep));
+	tokenSep = '\x020';
+	BOOST_CHECK(!isInstructionSeparator(tokenSep));	
+	tokenSep = '1';
+	BOOST_CHECK(!isInstructionSeparator(tokenSep));		
 }
 
 BOOST_AUTO_TEST_SUITE_END()
