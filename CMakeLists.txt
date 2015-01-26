@@ -19,6 +19,7 @@ add_subdirectory (src)
 add_subdirectory (test)
 
 include_directories (${TEST_SOURCE_DIR}/src)
+message("${TEST_SOURCE_DIR}")
 add_executable (demo main.cpp)
 target_link_libraries (demo Sqr)
 

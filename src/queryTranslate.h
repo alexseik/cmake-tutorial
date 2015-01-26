@@ -1,7 +1,11 @@
 #ifndef QUERY_TRANSLATE_H
 #define QUERY_TRANSLATE_H
 #include <stdlib.h>
-using namespace std;
+#include <boost/smart_ptr.hpp>
+#include "token.h"
+//using namespace std;
+
+static int tokenCount = 0;
 
 bool acceptMaintable(const std::string& );
 
@@ -22,5 +26,13 @@ bool acceptStartsep(const std::string& );
 bool isSeparator(char);
 
 bool isInstructionSeparator(char);
+
+std::string getFirstTokenString(std::string&);
+
+std::vector<std::string> getInstructions(std::string&);
+
+boost::shared_ptr<CToken> getFirstToken(std::string&);
+
+boost::shared_ptr<CToken> produceToken(std::string&);
 
 #endif
