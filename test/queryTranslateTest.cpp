@@ -144,4 +144,27 @@ BOOST_AUTO_TEST_CASE(getFirstTokenTest)
 	//bad instructions
 }
 */
+
+BOOST_AUTO_TEST_CASE(processMaintableTest)
+{
+	std::string inst1 = "MAINTABLE 011.DAT";
+	std::string inst2 = "MAInTaBLE 011.DAT";
+	std::string inst3 = "maintable FCMLGCAT.DAT";
+	std::string inst4 = "MAINTABLE FZTYP.DAT";
+	bool result;
+	std::vector<CToken> tokens;
+	// test true if instruction begins by Maintable ()
+	result = processMaintable (inst1,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 2);
+	result = processMaintable (inst2,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 2);
+	result = processMaintable (inst3,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 2);
+	result = processMaintable (inst4,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 2);
+}
 BOOST_AUTO_TEST_SUITE_END()
