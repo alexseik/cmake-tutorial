@@ -31,4 +31,6 @@ std::vector<std::string> getInstructions(std::string&);
 
 bool processMaintable(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
 
+bool processOutfields(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
+
 #endif

@@ -93,3 +93,8 @@ bool processMaintable(const std::string& instruction, std::vector<boost::shared_
 	}
 	return false;
 }
+
+bool processOutfields(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	return false;
+}

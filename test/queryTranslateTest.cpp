@@ -166,4 +166,18 @@ BOOST_AUTO_TEST_CASE(processMaintableTest)
 	result = processMaintable (inst,tokens);
 	BOOST_CHECK(result == false);
 }
+
+BOOST_AUTO_TEST_CASE(processOutfieldsTest)
+{
+	bool result;
+	std::vector<boost::shared_ptr<CToken>> tokens;
+
+	// test true if instruction begins by Maintable
+	std::string inst = "OUTFIELDS VAT.DAT:VATVALID, VATVAL;VATLIST.DAT:INCLEXCL";
+	result = processOutfields (inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 6);
+	tokens.clear();	
+}
+
 BOOST_AUTO_TEST_SUITE_END()
