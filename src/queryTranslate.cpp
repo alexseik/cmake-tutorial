@@ -113,4 +113,21 @@ boost::shared_ptr<CToken> produceToken(std::string& tokenStr){
 }*/
 
 
+bool processMaintable(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	boost::regex re ("((?i)MAINTABLE)(\\s+\\w+(.DAT)?)");
+	boost::smatch what;
 
+	bool result = boost::regex_match(instruction.begin(),instruction.end(), what, re);
+	if (result) {
+		std::string ident(what[1].first, what[1].second);
+		std::string value(what[2].first, what[2].second);
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "MAINTABLE", "MAINTABLE", Kind::FROM));
+		tokens.push_back(tokenReservedWord);
+		boost::trim(value);
+		boost::shared_ptr<CToken> tokenIden(new CToken(0, value, "IDENTIFIER", Kind::FROM));
+		tokens.push_back(tokenIden);
+		return true;
+	}
+	return false;
+}

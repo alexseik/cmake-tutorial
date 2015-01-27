@@ -147,24 +147,49 @@ BOOST_AUTO_TEST_CASE(getFirstTokenTest)
 
 BOOST_AUTO_TEST_CASE(processMaintableTest)
 {
-	std::string inst1 = "MAINTABLE 011.DAT";
-	std::string inst2 = "MAInTaBLE 011.DAT";
-	std::string inst3 = "maintable FCMLGCAT.DAT";
-	std::string inst4 = "MAINTABLE FZTYP.DAT";
 	bool result;
-	std::vector<CToken> tokens;
-	// test true if instruction begins by Maintable ()
-	result = processMaintable (inst1,tokens);
+	std::vector<boost::shared_ptr<CToken>> tokens;
+
+	// test true if instruction begins by Maintable
+	std::string inst = "MAInTaBLE 011.DAT";
+	result = processMaintable (inst,tokens);
 	BOOST_CHECK(result == true);
 	BOOST_CHECK(tokens.size() == 2);
-	result = processMaintable (inst2,tokens);
+	tokens.clear();
+
+	inst = "MAINTABLE 011.DAT";
+	result = processMaintable (inst,tokens);
 	BOOST_CHECK(result == true);
 	BOOST_CHECK(tokens.size() == 2);
-	result = processMaintable (inst3,tokens);
+	tokens.clear();
+
+	inst = "maintable FCMLGCAT.DAT";
+	result = processMaintable (inst,tokens);
 	BOOST_CHECK(result == true);
 	BOOST_CHECK(tokens.size() == 2);
-	result = processMaintable (inst4,tokens);
+	tokens.clear();
+
+	inst = "MAINTABLE FZTYP.DAT";
+	result = processMaintable (inst,tokens);
 	BOOST_CHECK(result == true);
 	BOOST_CHECK(tokens.size() == 2);
+	tokens.clear();
+
+	//test trim on table identifier
+	inst = "MAINTaBLE   VAT.DAT";
+	result = processMaintable (inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 2);
+	BOOST_CHECK(tokens[1]->getValue() == "VAT.DAT");	
+	tokens.clear();
+
+	//test false if instruction doesn't begin by maintable
+	inst = "MAINABLE FZTYP.DAT";
+	result = processMaintable (inst,tokens);
+	BOOST_CHECK(result == false);
+	//instructions have to be trimmed by the instructor separator
+	inst = "    MAINABLE FZTYP.DAT";
+	result = processMaintable (inst,tokens);
+	BOOST_CHECK(result == false);
 }
 BOOST_AUTO_TEST_SUITE_END()
