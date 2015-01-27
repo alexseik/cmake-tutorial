@@ -1,5 +1,6 @@
 #include <boost/regex.hpp>
 #include <boost/smart_ptr.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "queryTranslate.h"
 #include "token.h"
@@ -85,7 +86,9 @@ std::vector<std::string> getInstructions(std::string& input){
 	boost::sregex_token_iterator j;
 	//unsigned count = 0;
 	while (i != j){
-		aux.push_back(*i++);
+		std::string inst = *i++;
+		boost::trim(inst);
+		aux.push_back(inst);
 		//count++;
 	}	
 	return 	aux;
