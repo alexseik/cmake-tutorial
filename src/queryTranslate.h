@@ -27,13 +27,7 @@ bool isSeparator(char);
 
 bool isInstructionSeparator(char);
 
-//std::string getFirstTokenString(std::string&);
-
 std::vector<std::string> getInstructions(std::string&);
-
-//boost::shared_ptr<CToken> getFirstToken(std::string&);
-
-//boost::shared_ptr<CToken> produceToken(std::string&);
 
 bool processMaintable(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
 

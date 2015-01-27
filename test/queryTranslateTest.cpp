@@ -78,20 +78,6 @@ BOOST_AUTO_TEST_CASE(InstructionSeparators)
 	tokenSep = '1';
 	BOOST_CHECK(!isInstructionSeparator(tokenSep));		
 }
-/*
-BOOST_AUTO_TEST_CASE(getFirstTokenStringTest)
-{
-	std::string instructions,token;
-	// good instructions	
-	instructions = "STARTSEP \"\"|FIELDSEP \",\"|RECORDSEP \"\\r\\n\"|MAXRECNUM 1|MAINTABLE FCOPTS1.DAT|";
-	token = getFirstTokenString(instructions);
-	BOOST_CHECK(token == "STARTSEP");
-	// care about spaces before token
-	instructions = " \"\"|FIELDSEP \",\"|RECORDSEP \"\\r\\n\"|MAXRECNUM 1|MAINTABLE FCOPTS1.DAT|";
-	token = getFirstTokenString(instructions);
-	BOOST_CHECK(token == "\"\"");
-	//bad instructions
-}*/
 
 BOOST_AUTO_TEST_CASE(getInstructionsTest)
 {
@@ -132,18 +118,6 @@ BOOST_AUTO_TEST_CASE(getInstructionsTest)
 	BOOST_CHECK(instructionSet[2] == "CONDITION  TYPCODE = \"@\"");
 }
 
-/*
-BOOST_AUTO_TEST_CASE(getFirstTokenTest)
-{
-	std::string instructions;
-	boost::shared_ptr<CToken> token;
-	// good instructions
-	instructions = "STARTSEP \"\"|FIELDSEP \",\"|RECORDSEP \"\\r\\n\"|MAXRECNUM 1|MAINTABLE FCOPTS1.DAT|";
-	token = getFirstToken(instructions);
-	BOOST_CHECK(token->getSymbol() == "STARTSEP");
-	//bad instructions
-}
-*/
 
 BOOST_AUTO_TEST_CASE(processMaintableTest)
 {

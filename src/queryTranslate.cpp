@@ -59,25 +59,6 @@ bool isInstructionSeparator(char input){
 	static const boost::regex sep("[[.vertical-line.]]|[[.newline.]]");
 	return boost::regex_match(aux, sep);
 }
-/*
-std::string getFirstTokenString(std::string& input){	
-	char i = input[0];	
-	std::string aux = "";
-	aux += i;
-	static const boost::regex blank("[[:blank:]]");
-	while(boost::regex_match(aux, blank)){
-		aux = "";		
-		aux += input[1];
-		input.erase(0,1);
-	}
-	aux = "";
-	while(!isSeparator(i) && !isInstructionSeparator(i)){
-		aux += i;
-		input.erase(0,1);
-		i = input[0];
-	}
-	return aux;
-}*/
 
 std::vector<std::string> getInstructions(std::string& input){
 	std::vector<std::string> aux;
@@ -93,25 +74,6 @@ std::vector<std::string> getInstructions(std::string& input){
 	}	
 	return 	aux;
 }
-/*
-boost::shared_ptr<CToken> getFirstToken(std::string& input){
-	std::string tokenStr = getFirstTokenString(input);	
-	return produceToken(tokenStr);
-}*/
-/*
-boost::shared_ptr<CToken> produceToken(std::string& tokenStr){
-	
-	if (acceptMaintable(tokenStr)){
-		boost::shared_ptr<CToken> token(new CToken(tokenCount++,tokenStr,tokenStr,FROM));
-		return token;
-	}
-	if (acceptStartsep(tokenStr)){
-		boost::shared_ptr<CToken> token(new CToken(tokenCount++,tokenStr,tokenStr,FROM));
-		return token;
-	}
-	return NULL;
-}*/
-
 
 bool processMaintable(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
