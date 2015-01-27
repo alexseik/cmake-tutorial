@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE(InstructionSeparators)
 	tokenSep = '1';
 	BOOST_CHECK(!isInstructionSeparator(tokenSep));		
 }
-
+/*
 BOOST_AUTO_TEST_CASE(getFirstTokenStringTest)
 {
 	std::string instructions,token;
@@ -91,13 +91,14 @@ BOOST_AUTO_TEST_CASE(getFirstTokenStringTest)
 	token = getFirstTokenString(instructions);
 	BOOST_CHECK(token == "\"\"");
 	//bad instructions
-}
+}*/
 
 BOOST_AUTO_TEST_CASE(getInstructionsTest)
 {
 	std::string instructions,result,token;
 	std::vector<std::string> instructionSet;
-	
+
+	// test vertical line like separator
 	instructions = "STARTSEP \"\"|FIELDSEP \",\"|RECORDSEP \"\\r\\n\"|MAXRECNUM 1|MAINTABLE FCOPTS1.DAT|"
 		"holalfdsafdsafdsaf\r\nfñlakjfañslfkjd\nsaf";
 	instructionSet = getInstructions(instructions);
@@ -108,10 +109,30 @@ BOOST_AUTO_TEST_CASE(getInstructionsTest)
 	BOOST_CHECK(instructionSet[4] == "MAINTABLE FCOPTS1.DAT");	
 	BOOST_CHECK(instructionSet[5] == "holalfdsafdsafdsaf");	
 	BOOST_CHECK(instructionSet[6] == "fñlakjfañslfkjd");	
-	BOOST_CHECK(instructionSet[7] == "saf");	
+	BOOST_CHECK(instructionSet[7] == "saf");
+
+	//test line break like separator
+	instructions = 
+		"MAINTABLE  086.DAT\r\n"
+		"OUTFIELDS  086.DAT:KUGRP1,KUGRP2,KUGRP3,KUGRP4,KUGRP5,KUGRP6,KUGRP7,LACKCODE\r\n"
+		"CONDITION  TYPCODE = \"@\"";
+	instructionSet = getInstructions(instructions);
+	BOOST_CHECK(instructionSet[0] == "MAINTABLE  086.DAT");
+	BOOST_CHECK(instructionSet[1] == "OUTFIELDS  086.DAT:KUGRP1,KUGRP2,KUGRP3,KUGRP4,KUGRP5,KUGRP6,KUGRP7,LACKCODE");	
+	BOOST_CHECK(instructionSet[2] == "CONDITION  TYPCODE = \"@\"");
+
+	//test trimed instruction returned
+	instructions = 
+		"MAINTABLE  086.DAT |"
+		"OUTFIELDS  086.DAT:KUGRP1,KUGRP2,KUGRP3,KUGRP4,KUGRP5,KUGRP6,KUGRP7,LACKCODE \r\n"
+		"CONDITION  TYPCODE = \"@\"";
+	instructionSet = getInstructions(instructions);
+	BOOST_CHECK(instructionSet[0] == "MAINTABLE  086.DAT");
+	BOOST_CHECK(instructionSet[1] == "OUTFIELDS  086.DAT:KUGRP1,KUGRP2,KUGRP3,KUGRP4,KUGRP5,KUGRP6,KUGRP7,LACKCODE");	
+	BOOST_CHECK(instructionSet[2] == "CONDITION  TYPCODE = \"@\"");
 }
 
-
+/*
 BOOST_AUTO_TEST_CASE(getFirstTokenTest)
 {
 	std::string instructions;
@@ -122,5 +143,5 @@ BOOST_AUTO_TEST_CASE(getFirstTokenTest)
 	BOOST_CHECK(token->getSymbol() == "STARTSEP");
 	//bad instructions
 }
-
+*/
 BOOST_AUTO_TEST_SUITE_END()

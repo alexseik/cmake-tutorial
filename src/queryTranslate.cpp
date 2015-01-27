@@ -58,7 +58,7 @@ bool isInstructionSeparator(char input){
 	static const boost::regex sep("[[.vertical-line.]]|[[.newline.]]");
 	return boost::regex_match(aux, sep);
 }
-
+/*
 std::string getFirstTokenString(std::string& input){	
 	char i = input[0];	
 	std::string aux = "";
@@ -76,7 +76,7 @@ std::string getFirstTokenString(std::string& input){
 		i = input[0];
 	}
 	return aux;
-}
+}*/
 
 std::vector<std::string> getInstructions(std::string& input){
 	std::vector<std::string> aux;
@@ -90,12 +90,12 @@ std::vector<std::string> getInstructions(std::string& input){
 	}	
 	return 	aux;
 }
-
+/*
 boost::shared_ptr<CToken> getFirstToken(std::string& input){
 	std::string tokenStr = getFirstTokenString(input);	
 	return produceToken(tokenStr);
-}
-
+}*/
+/*
 boost::shared_ptr<CToken> produceToken(std::string& tokenStr){
 	
 	if (acceptMaintable(tokenStr)){
@@ -107,7 +107,7 @@ boost::shared_ptr<CToken> produceToken(std::string& tokenStr){
 		return token;
 	}
 	return NULL;
-}
+}*/
 
 
 
