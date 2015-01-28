@@ -33,4 +33,6 @@ bool processMaintable(const std::string&, std::vector<boost::shared_ptr<CToken>>
 
 bool processOutfields(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
 
+bool processCondition(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
+
 #endif

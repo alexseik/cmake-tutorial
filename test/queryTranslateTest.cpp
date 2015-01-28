@@ -210,4 +210,15 @@ BOOST_AUTO_TEST_CASE(processOutfieldsTest)
 	tokens.clear();
 }
 
+BOOST_AUTO_TEST_CASE(processCONDITIONTest)
+{
+	bool result;
+	std::vector<boost::shared_ptr<CToken>> tokens;
+
+	//test true if instruction begins with condition
+	std::string inst = "CONDITION TYPNR = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == true);
+}
+
 BOOST_AUTO_TEST_SUITE_END()
