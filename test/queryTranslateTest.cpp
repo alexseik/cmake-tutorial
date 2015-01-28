@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE(processOutfieldsTest)
 	tokens.clear();
 }
 
-BOOST_AUTO_TEST_CASE(processCONDITIONTest)
+BOOST_AUTO_TEST_CASE(processConditionTest)
 {
 	bool result;
 	std::vector<boost::shared_ptr<CToken>> tokens;
@@ -219,6 +219,54 @@ BOOST_AUTO_TEST_CASE(processCONDITIONTest)
 	std::string inst = "CONDITION TYPNR = \"@\"";
 	result = processCondition(inst,tokens);
 	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 4);
+	tokens.clear();
+
+	//test true with multiple conditions and spaces
+	inst = "CONDITION KUCODE = \"@\" AND HGR = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 8);
+	tokens.clear();
+
+	inst = "CONdiTiON KUCODE = \"@\" AND HGR = \"@\" OR CACA = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens[4]->getValue() == "AND");
+	BOOST_CHECK(tokens.size() == 12);
+	tokens.clear();
+
+	inst = "CONDITION KUCODE= \"@\"    AND HGR =\"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 8);
+	tokens.clear();
+
+	//test false if intruction does not begin with CONDITION
+	inst = "CONdiTON KUCODE = \"@\" AND HGR = \"@\" OR CACA = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == false);
+	BOOST_CHECK(tokens.empty());
+	tokens.clear();
+
+	inst = "    CONdiTiON KUCODE = \"@\" AND HGR = \"@\" OR CACA = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == false);
+	BOOST_CHECK(tokens.empty());
+	tokens.clear();
+
+	//test false if AND or OR condition is collated
+	inst = "CONDITION KUCODE = \"@\"AND HGR = \"@\" OR CACA = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == false);
+	BOOST_CHECK(tokens.empty());
+	tokens.clear();
+
+	inst = "CONDITION KUCODE = \"@\" ANDHGR = \"@\" OR CACA = \"@\"";
+	result = processCondition(inst,tokens);
+	BOOST_CHECK(result == false);
+	BOOST_CHECK(tokens.empty());
+	tokens.clear();
 }
 
 BOOST_AUTO_TEST_SUITE_END()

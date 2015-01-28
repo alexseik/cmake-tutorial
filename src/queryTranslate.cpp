@@ -168,5 +168,97 @@ bool processOutfields(const std::string& instruction, std::vector<boost::shared_
 
 bool processCondition(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
-	return false;
+	bool result = false;
+	std::string condition;
+	std::vector<std::string> conditions;
+	std::vector<std::string> opers;
+	//test instruction begins with correct reserved word and erase it from instruction producing a token
+	boost::regex firstRegex ("^((?i)CONDITION)\\s+(.*)");
+	boost::match_results<std::string::const_iterator> what;
+	boost::match_flag_type flags = boost::match_default;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,firstRegex,flags)){
+		condition = what[2];
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "CONDITION", "CONDITION", Kind::WHERE));
+		tokens.push_back(tokenReservedWord);
+		result = true;
+	} else return false; //return false if instruction does not begin with condition
+	
+	//count "AND" or "OR" and save in opers.
+	boost::regex e("AND|OR");
+    boost::sregex_token_iterator i(condition.begin(), condition.end(), e, 0);
+    boost::sregex_token_iterator j;
+	int condCount = 0;	
+	while(i != j)
+	{
+		//std::cout << *i << std::endl;
+		opers.push_back(*i++);
+		condCount++;
+	}
+	//conditions well formed
+	boost::regex wellCondExp("\\s+AND\\s+|\\s+OR\\s+");
+    i = boost::sregex_token_iterator (condition.begin(), condition.end(), wellCondExp, 0);
+    j = boost::sregex_token_iterator ();
+	int goodCondCount = 0;	
+	while(i != j)
+	{
+		//std::cout << *i << std::endl;
+		opers.push_back(*i++);
+		goodCondCount++;
+	}
+	if (condCount != goodCondCount) {
+		tokens.clear();
+		return false;
+	}
+	//split instruction by "AND" or "OR"
+    i = boost::sregex_token_iterator (condition.begin(), condition.end(), e, -1);
+    j = boost::sregex_token_iterator ();
+	int count = 0;	
+	while(i != j)
+	{
+		//std::cout << *i << std::endl;
+		std::string aux = *i++;
+		boost::trim(aux);
+		conditions.push_back(aux);
+		count++;
+	}
+	if (count < 1 || count != condCount + 1) {// should there be a minimum of one condition
+		tokens.clear();
+		return false;
+	} 
+	//std::cout << "There were " << count << " conditions found." << std::endl;
+
+	//for each condition parse its tokens	
+	for (int k = 0; k<count; k++) {
+		boost::regex ce("^(\\w+)\\s*(=|\\<|>|\\<>)\\s*(\"@\")");
+		boost::match_results<std::string::const_iterator> whatOpe;
+		boost::match_flag_type flags = boost::match_default;
+		if (boost::regex_search(conditions[k],whatOpe,ce,flags)) {						
+			if (k > 0) { // save condition
+				std::string aux = opers[k-1]; // condition
+				boost::trim(aux);
+				boost::shared_ptr<CToken> tokenCondition(new CToken(0, aux, "CONDITION", Kind::WHERE));
+				tokens.push_back(tokenCondition);
+			}
+			//save field name
+			std::string aux = whatOpe[1]; // field submatch
+			boost::trim(aux);
+			boost::shared_ptr<CToken> tokenFiledName(new CToken(0, aux, "FIELDNAME", Kind::WHERE));
+			tokens.push_back(tokenFiledName);
+			//save operator
+			aux = whatOpe[2]; // operator submatch
+			boost::trim(aux);
+			boost::shared_ptr<CToken> tokenOperator(new CToken(0, aux, "OPERATOR", Kind::WHERE));
+			tokens.push_back(tokenOperator);
+			//save parameter for use after
+			aux = whatOpe[3]; // parameter submatch
+			boost::trim(aux);
+			boost::shared_ptr<CToken> tokenParameter(new CToken(0, aux, "PARAMETER", Kind::WHERE));
+			tokens.push_back(tokenParameter);
+			result = true;
+		} else {
+			tokens.clear();
+			return false;
+		}
+	}
+	return result;
 }
