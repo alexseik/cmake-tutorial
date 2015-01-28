@@ -1,3 +1,4 @@
+//#include <iostream>
 #include <boost/regex.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/algorithm/string.hpp>
@@ -96,5 +97,71 @@ bool processMaintable(const std::string& instruction, std::vector<boost::shared_
 
 bool processOutfields(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
-	return false;
+	std::vector<std::string> tables;
+	bool result = false;
+
+	//split instruction by tables references, split by ";"
+	boost::regex e(";");
+    boost::sregex_token_iterator i(instruction.begin(), instruction.end(), e, -1);
+    boost::sregex_token_iterator j;
+    unsigned count = 0;
+    while(i != j)
+    {
+		//std::cout << *i << std::endl;
+		tables.push_back(*i++);		
+        count++;
+    }
+	if (count == 0) return false;
+	//std::cout << "There were " << count << " instructions found." << std::endl;
+	
+	//test instruction begins with correct reserved word and erase it from instruction producing a token
+	boost::regex firstRegex ("^((?i)OUTFIELDS)\\s+(.*)");
+	std::string::const_iterator start, end;
+	start = tables[0].begin();
+	end = tables[0].end();
+	boost::match_results<std::string::const_iterator> what;
+	boost::match_flag_type flags = boost::match_default;
+	if (boost::regex_match(start,end,what,firstRegex,flags)){
+		tables[0] = what[2];
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "OUTFIELDS", "OUTFIELDS", Kind::SELECT));
+		tokens.push_back(tokenReservedWord);
+		result = true;
+	} else return false;
+
+	//parse tokens from tables references found	
+	boost::regex instRegex (":");	
+	for (int k = 0; k<count; k++) {
+		// first, split by colon ":"
+		i = boost::sregex_token_iterator(tables[k].begin(), tables[k].end(), instRegex, -1);
+		j = boost::sregex_token_iterator();
+		std::vector<std::string> insPart;
+		unsigned count1 = 0;
+		while(i != j)
+		{
+			//std::cout << *i << std::endl;
+			insPart.push_back(*i++);
+			count1++;
+		}
+		if (count1 != 2) return false; // should be a table name and several fields
+		//second, save table name into a token
+		boost::trim(insPart[0]);
+		boost::shared_ptr<CToken> tableName(new CToken(0, insPart[0], "TABLENAME", Kind::SELECT));
+		tokens.push_back(tableName);
+		//third, save field names
+		boost::regex instRegex (",");
+		i = boost::sregex_token_iterator(insPart[1].begin(), insPart[1].end(), instRegex, -1);
+		j = boost::sregex_token_iterator();
+		unsigned count2 = 0;
+		while (i != j){
+			std::string aux = *i++;
+			boost::trim(aux);
+			//std::cout << aux << std::endl;
+			boost::shared_ptr<CToken> fieldName(new CToken(0, aux, "FIELDNAME", Kind::SELECT));
+			tokens.push_back(fieldName);
+			count2++;
+		}
+		if (count2 < 1) return false; //it should be at least one field
+	}	
+	
+	return result;
 }

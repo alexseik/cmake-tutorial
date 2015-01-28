@@ -172,12 +172,42 @@ BOOST_AUTO_TEST_CASE(processOutfieldsTest)
 	bool result;
 	std::vector<boost::shared_ptr<CToken>> tokens;
 
-	// test true if instruction begins by Maintable
-	std::string inst = "OUTFIELDS VAT.DAT:VATVALID, VATVAL;VATLIST.DAT:INCLEXCL";
+	//test false if instruction does not begin with outfields
+	std::string inst = "OUTFILDS VAT.DAT:VATVALID, VATVAL, TRANCA;VATLIST.DAT:INCLEXCL";
+	result = processOutfields (inst,tokens);
+	BOOST_CHECK(result == false);
+
+	//instructions have to be trimmed by the instructor separator	
+	inst = " OUTFIELDS VAT.DAT:VATVALID, VATVAL, TRANCA;VATLIST.DAT:INCLEXCL";
+	result = processOutfields (inst,tokens);
+	BOOST_CHECK(result == false);
+
+	//test true if instruction begins by Outfields
+	inst = "OUTFIELDS FZTYP.DAT:LETZTNPD";
+	result = processOutfields(inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 3);
+	tokens.clear();
+
+	//test multiples tables in select(OUTFIELDS) instruciton
+	inst = "OUTFIELDS VAT.DAT:VATVALID, VATVAL, TRANCA;VATLIST.DAT:INCLEXCL";
 	result = processOutfields (inst,tokens);
 	BOOST_CHECK(result == true);
-	BOOST_CHECK(tokens.size() == 6);
+	BOOST_CHECK(tokens.size() == 7);
 	tokens.clear();	
+
+	inst = "OUTFIELDS     VAT.DAT:VATVALID, VATVAL, TRANCA;VATLIST.DAT:INCLEXCL; AUTOMAT.DAT:CACHONDO,LISTO";
+	result = processOutfields (inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 10);
+	tokens.clear();
+
+	inst = "OUTFIELDS     VAT.DAT:    VATVALID  , VATVAL, TRANCA  ;VATLIST.DAT:INCLEXCL; AUTOMAT.DAT:CACHONDO,LISTO";
+	result = processOutfields (inst,tokens);
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens.size() == 10);
+	BOOST_CHECK(tokens[7]->getValue() == "AUTOMAT.DAT");
+	tokens.clear();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
