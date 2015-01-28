@@ -333,3 +333,45 @@ bool processJoinlist(const std::string& instruction, std::vector<boost::shared_p
 	} 
 	return true;
 }
+
+bool processStartsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	boost::regex reservedWordRegex ("^((?i)STARTSEP)\\s+(\".*\")");
+	boost::match_results<std::string::const_iterator> what;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "STARTSEP", "STARTSEP", Kind::STARTSEP));
+		tokens.push_back(tokenReservedWord);
+		std::string sep = what[2];
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, "SEPARATOR", Kind::STARTSEP));
+		tokens.push_back(tokenSeparator);
+		return true;  
+	} else return false; //return false if instruction does not begin with startsep	  
+}
+
+bool processRecordsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	boost::regex reservedWordRegex ("^((?i)RECORDSEP)\\s+(\".*\")");
+	boost::match_results<std::string::const_iterator> what;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "RECORDSEP", "RECORDSEP", Kind::RECORDSEP));
+		tokens.push_back(tokenReservedWord);
+		std::string sep = what[2];
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, "SEPARATOR", Kind::RECORDSEP));
+		tokens.push_back(tokenSeparator);
+		return true;  
+	} else return false; //return false if instruction does not begin with startsep
+}
+
+bool processFieldsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	boost::regex reservedWordRegex ("^((?i)FIELDSEP)\\s+(\".*\")");
+	boost::match_results<std::string::const_iterator> what;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "FIELDSEP", "FIELDSEP", Kind::FIELDSEP));
+		tokens.push_back(tokenReservedWord);
+		std::string sep = what[2];
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, "SEPARATOR", Kind::FIELDSEP));
+		tokens.push_back(tokenSeparator);
+		return true;  
+	} else return false; //return false if instruction does not begin with startsep
+}

@@ -321,4 +321,98 @@ BOOST_AUTO_TEST_CASE(processJoinlistTest)
 	BOOST_CHECK(result == false);
 	tokens.clear();
 }
+
+BOOST_AUTO_TEST_CASE(processStartsepTest)
+{
+	bool result;
+	
+	//test true with valid start
+	std::vector<boost::shared_ptr<CToken>> tokens;
+	std::string inst = "STARTSEP  \"\"";
+	result = processStartsep(inst,tokens);
+	BOOST_CHECK(tokens.size() == 2);
+	BOOST_CHECK(tokens[0]->getValue() == "STARTSEP");
+	BOOST_CHECK(tokens[0]->getSymbol() == "STARTSEP");
+	BOOST_CHECK(tokens[0]->getKind() == Kind::STARTSEP);
+	BOOST_CHECK(tokens[1]->getValue() == "\"\"");
+	BOOST_CHECK(tokens[1]->getSymbol() == "SEPARATOR");
+	BOOST_CHECK(tokens[1]->getKind() == Kind::STARTSEP);
+	BOOST_CHECK(result == true);
+	tokens.clear();	
+	
+	//test false
+	inst = "STARTSEPS \"\"";
+	result = processStartsep(inst,tokens);
+	BOOST_CHECK(tokens.empty());
+	BOOST_CHECK(result == false);
+	
+	//test false cause there is not " for separator
+	inst = "STARTSEP pepito";
+	result = processStartsep(inst,tokens);
+	BOOST_CHECK(tokens.empty());
+	BOOST_CHECK(result == false);
+}
+
+BOOST_AUTO_TEST_CASE(processRecordsepTest)
+{
+	bool result;
+	
+	//test true with valid start
+	std::vector<boost::shared_ptr<CToken>> tokens;
+	std::string inst = "RECORDSEP  \"\\r\\n\"";
+	result = processRecordsep(inst,tokens);
+	BOOST_CHECK(tokens.size() == 2);
+	BOOST_CHECK(tokens[0]->getValue() == "RECORDSEP");
+	BOOST_CHECK(tokens[0]->getSymbol() == "RECORDSEP");
+	BOOST_CHECK(tokens[0]->getKind() == Kind::RECORDSEP);	
+	BOOST_CHECK(tokens[1]->getValue() == "\"\\r\\n\"");
+	BOOST_CHECK(tokens[1]->getSymbol() == "SEPARATOR");
+	BOOST_CHECK(tokens[1]->getKind() == Kind::RECORDSEP);
+	BOOST_CHECK(result == true);
+	tokens.clear();
+	
+	//test false
+	inst = "RECORDSEPS \"\"";
+	result = processRecordsep(inst,tokens);
+	BOOST_CHECK(tokens.empty());
+	BOOST_CHECK(result == false);
+	
+	//test false cause there is not " for separator
+	inst = "RECORDSEP pepito";
+	result = processRecordsep(inst,tokens);
+	BOOST_CHECK(tokens.empty());
+	BOOST_CHECK(result == false);
+}
+
+BOOST_AUTO_TEST_CASE(processFieldsepTest)
+{
+	bool result;
+	
+	//test true with valid start
+	std::vector<boost::shared_ptr<CToken>> tokens;
+	std::string inst = "FIeLDSEP  \"\"";
+	result = processFieldsep(inst,tokens);
+	BOOST_CHECK(tokens.size() == 2);	
+	BOOST_CHECK(tokens[0]->getValue() == "FIELDSEP");
+	BOOST_CHECK(tokens[0]->getSymbol() == "FIELDSEP");
+	BOOST_CHECK(tokens[0]->getKind() == Kind::FIELDSEP);
+	BOOST_CHECK(tokens[1]->getValue() == "\"\"");
+	BOOST_CHECK(tokens[1]->getSymbol() == "SEPARATOR");
+	BOOST_CHECK(tokens[1]->getKind() == Kind::FIELDSEP);
+	BOOST_CHECK(result == true);
+	tokens.clear();
+	
+	//test false
+	inst = "RECORDSEPS \"\"";
+	result = processFieldsep(inst,tokens);
+	BOOST_CHECK(tokens.empty());
+	BOOST_CHECK(result == false);
+	
+	//test false cause there is not " for separator
+	inst = "FIELDSEP pepito";
+	result = processFieldsep(inst,tokens);
+	BOOST_CHECK(tokens.empty());
+	BOOST_CHECK(result == false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

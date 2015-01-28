@@ -37,4 +37,10 @@ bool processCondition(const std::string&, std::vector<boost::shared_ptr<CToken>>
 
 bool processJoinlist(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
 
+bool processStartsep(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
+
+bool processRecordsep(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
+
+bool processFieldsep(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
+
 #endif
