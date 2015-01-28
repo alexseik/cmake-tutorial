@@ -269,4 +269,56 @@ BOOST_AUTO_TEST_CASE(processConditionTest)
 	tokens.clear();
 }
 
+BOOST_AUTO_TEST_CASE(processJoinlistTest)
+{
+	bool result;
+	
+	//test true with valid start
+	std::vector<boost::shared_ptr<CToken>> tokens;
+	std::string inst = "JOiNliST MCODE,MASTX:MCODE";
+	result = processJoinlist(inst,tokens);
+	BOOST_CHECK(tokens.size() == 4);	
+	BOOST_CHECK(result == true);
+	tokens.clear();
+	//test true with multiple fields
+	inst = "JOINLIST  MCODE,MASTX:MCODE;KUCODE,060.DAT:MARMODTYP;MCODE,060.DAT:MCODE";
+	result = processJoinlist(inst,tokens);
+	BOOST_CHECK(tokens.size() == 10);
+	BOOST_CHECK(tokens[0]->getValue() == "JOINLIST");
+	BOOST_CHECK(tokens[5]->getValue() == "060.DAT");
+	BOOST_CHECK(tokens[5]->getSymbol() == "TABLENAME");
+	BOOST_CHECK(tokens[5]->getKind() == Kind::JOIN);
+	BOOST_CHECK(result == true);
+	tokens.clear();
+	//test true with multiple fields, spaces and insensitive reserved word
+	inst = "JOiNLiST MCODE  , MASTX :MCODE;  KUCODE, 060.DAT: MARMODTYP ;MCODE,060.DAT:MCODE";
+	result = processJoinlist(inst,tokens);
+	BOOST_CHECK(tokens.size() == 10);
+	BOOST_CHECK(tokens[0]->getValue() == "JOINLIST");
+	BOOST_CHECK(tokens[5]->getValue() == "060.DAT");
+	BOOST_CHECK(tokens[5]->getSymbol() == "TABLENAME");
+	BOOST_CHECK(tokens[5]->getKind() == Kind::JOIN);
+	BOOST_CHECK(result == true);
+	tokens.clear();
+	
+	//test false wrong instruction start
+	inst = "JOiNiST MCODE  , MASTX :MCODE;  KUCODE, 060.DAT: MARMODTYP ;MCODE,060.DAT:MCODE";
+	result = processJoinlist(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
+	
+	inst = "JOiNliSTMCODE  , MASTX :MCODE;  KUCODE, 060.DAT: MARMODTYP ;MCODE,060.DAT:MCODE";
+	result = processJoinlist(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
+	
+	//test false incorrect group arguments
+	inst = "JOiNliST MASTX:MCODE,MCODE";
+	result = processJoinlist(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
+}
 BOOST_AUTO_TEST_SUITE_END()

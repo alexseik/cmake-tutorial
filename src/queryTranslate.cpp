@@ -262,3 +262,74 @@ bool processCondition(const std::string& instruction, std::vector<boost::shared_
 	}
 	return result;
 }
+
+bool processJoinlist(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{		
+	std::string joinGroups;	
+	boost::regex reservedWordRegex ("^((?i)JOINLIST)\\s+(.*)");
+	boost::match_results<std::string::const_iterator> what;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){		
+		joinGroups = what[2];
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "JOINLIST", "JOINLIST", Kind::JOIN));
+		tokens.push_back(tokenReservedWord);		
+	} else return false; //return false if instruction does not begin with joinlist
+	
+	std::vector<std::string> joins;
+	boost::regex joinGroupExp(";");
+	boost::sregex_token_iterator i(joinGroups.begin(), joinGroups.end(), joinGroupExp, -1);
+	boost::sregex_token_iterator j;
+	int count = 0;	
+	while(i != j)
+	{
+		//std::cout << *i << std::endl;
+		std::string groupStr = *i++;
+		boost::trim(groupStr);
+		//joins.push_back(aux);
+		boost::regex fieldExp(",");
+		boost::sregex_token_iterator k(groupStr.begin(), groupStr.end(), fieldExp, -1);
+		boost::sregex_token_iterator l;
+		int pair = 0;
+		while (k != l)
+		{
+			std::string aux = *k++;
+			boost::trim(aux);
+			if (pair == 0){
+				  if (aux.find(':') != std::string::npos) {
+					    tokens.clear();
+					    return false; // first fieldname
+				  }
+				  boost::shared_ptr<CToken> tokenParameter(new CToken(0, aux, "FIELDNAME", Kind::JOIN));
+				  tokens.push_back(tokenParameter);
+			}
+			else if (pair == 1){
+				  boost::regex fieldExp(":");
+				  boost::sregex_token_iterator m(aux.begin(), aux.end(), fieldExp, -1);
+				  boost::sregex_token_iterator n;
+				  int elems = 0;
+				  while (m != n)
+				  {
+					  std::string value = *m++;
+					  boost::trim(value);
+					  if (elems == 0){
+						    boost::shared_ptr<CToken> tokenParameter(new CToken(0, value, "TABLENAME", Kind::JOIN));
+						    tokens.push_back(tokenParameter);
+					  }
+					  else if (elems == 1){
+						    boost::shared_ptr<CToken> tokenParameter(new CToken(0, value, "FIELDNAME", Kind::JOIN));
+						    tokens.push_back(tokenParameter);
+					  }
+					  else return false; // no more than two values in a group
+					  elems++;
+				  }
+			}
+			else return false; // no more than two values in a group
+			pair++;
+		}
+		count++;
+	}
+	if (count < 1) {// should there be a minimum of one condition
+		tokens.clear();
+		return false;
+	} 
+	return true;
+}
