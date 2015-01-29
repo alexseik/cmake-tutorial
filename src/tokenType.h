@@ -65,6 +65,7 @@ namespace TokenSymbol {
 		TK_RECORDSEP, /* Token for reserved word RECORDSEP */
 		TK_FIELDSEP, /* Token for reserved word FIELDSEP */
 		TK_OUTFIELDTYPES, /* Token for reserved word OUTFIELDTYPES*/
+		TK_MAXRECNUM, /* Token for reserved word MAXRECNUM*/
 		VALUE /* Token for a value of foregoing token */
 	};
 };

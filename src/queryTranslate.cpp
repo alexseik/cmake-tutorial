@@ -419,3 +419,18 @@ bool processOutfieldtypes(const std::string& instruction, std::vector<boost::sha
 	}
 	return true;
 }
+
+bool processMaxrecnum(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	boost::regex reservedWordRegex ("^((?i)MAXRECNUM)\\s+(\\d*)");
+	boost::match_results<std::string::const_iterator> what;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "MAXRECNUM", TokenSymbol::TK_MAXRECNUM, TokenInstruction::MAXRECNUM));
+		tokens.push_back(tokenReservedWord);
+		std::string value = what[2];
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, value, TokenSymbol::VALUE, TokenInstruction::MAXRECNUM));
+		tokens.push_back(tokenSeparator);
+		return true;  
+	} else return false; //return false if instruction does not begin with startsep
+}
+

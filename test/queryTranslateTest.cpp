@@ -451,5 +451,33 @@ BOOST_AUTO_TEST_CASE(processOutfieldtypesTest)
 	tokens.clear();
 }
 
+BOOST_AUTO_TEST_CASE(processMaxrecnumTest)
+{
+	bool result;
+	
+	//test true with valid start
+	std::vector<boost::shared_ptr<CToken>> tokens;
+	std::string inst = "MAXRECNUM 1";
+	result = processMaxrecnum(inst,tokens);
+	BOOST_CHECK(tokens.size() == 2);	
+	BOOST_CHECK(result == true);
+	tokens.clear();
+
+	//test false cause wrong start	
+	inst = "MAXRECNUM1";
+	result = processMaxrecnum(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
+
+	//test false cause value is not a number
+	inst = "MAXRECNUM asf";
+	result = processMaxrecnum(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
+	
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
