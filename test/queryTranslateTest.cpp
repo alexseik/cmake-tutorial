@@ -442,6 +442,13 @@ BOOST_AUTO_TEST_CASE(processOutfieldtypesTest)
 	BOOST_CHECK(tokens.empty());	
 	BOOST_CHECK(result == false);
 	tokens.clear();
+
+	//test false cause DUMMY is bad formed
+	inst = "OUTFIELDTYPES RAW;DUMMY ;DUMMY \"    \"";
+	result = processOutfieldtypes(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
 }
 
 
