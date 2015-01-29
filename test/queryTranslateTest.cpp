@@ -286,8 +286,8 @@ BOOST_AUTO_TEST_CASE(processJoinlistTest)
 	BOOST_CHECK(tokens.size() == 10);
 	BOOST_CHECK(tokens[0]->getValue() == "JOINLIST");
 	BOOST_CHECK(tokens[5]->getValue() == "060.DAT");
-	BOOST_CHECK(tokens[5]->getSymbol() == "TABLENAME");
-	BOOST_CHECK(tokens[5]->getKind() == Kind::JOIN);
+	BOOST_CHECK(tokens[5]->getSymbol() == TokenSymbol::TNAME);
+	BOOST_CHECK(tokens[5]->getKind() == TokenInstruction::JOIN);
 	BOOST_CHECK(result == true);
 	tokens.clear();
 	//test true with multiple fields, spaces and insensitive reserved word
@@ -296,8 +296,8 @@ BOOST_AUTO_TEST_CASE(processJoinlistTest)
 	BOOST_CHECK(tokens.size() == 10);
 	BOOST_CHECK(tokens[0]->getValue() == "JOINLIST");
 	BOOST_CHECK(tokens[5]->getValue() == "060.DAT");
-	BOOST_CHECK(tokens[5]->getSymbol() == "TABLENAME");
-	BOOST_CHECK(tokens[5]->getKind() == Kind::JOIN);
+	BOOST_CHECK(tokens[5]->getSymbol() == TokenSymbol::TNAME);
+	BOOST_CHECK(tokens[5]->getKind() == TokenInstruction::JOIN);
 	BOOST_CHECK(result == true);
 	tokens.clear();
 	
@@ -332,11 +332,11 @@ BOOST_AUTO_TEST_CASE(processStartsepTest)
 	result = processStartsep(inst,tokens);
 	BOOST_CHECK(tokens.size() == 2);
 	BOOST_CHECK(tokens[0]->getValue() == "STARTSEP");
-	BOOST_CHECK(tokens[0]->getSymbol() == "STARTSEP");
-	BOOST_CHECK(tokens[0]->getKind() == Kind::STARTSEP);
+	BOOST_CHECK(tokens[0]->getSymbol() == TokenSymbol::TK_STARTSEP);
+	BOOST_CHECK(tokens[0]->getKind() == TokenInstruction::STARTSEP);
 	BOOST_CHECK(tokens[1]->getValue() == "\"\"");
-	BOOST_CHECK(tokens[1]->getSymbol() == "SEPARATOR");
-	BOOST_CHECK(tokens[1]->getKind() == Kind::STARTSEP);
+	BOOST_CHECK(tokens[1]->getSymbol() == TokenSymbol::VALUE);
+	BOOST_CHECK(tokens[1]->getKind() == TokenInstruction::STARTSEP);
 	BOOST_CHECK(result == true);
 	tokens.clear();	
 	
@@ -363,11 +363,11 @@ BOOST_AUTO_TEST_CASE(processRecordsepTest)
 	result = processRecordsep(inst,tokens);
 	BOOST_CHECK(tokens.size() == 2);
 	BOOST_CHECK(tokens[0]->getValue() == "RECORDSEP");
-	BOOST_CHECK(tokens[0]->getSymbol() == "RECORDSEP");
-	BOOST_CHECK(tokens[0]->getKind() == Kind::RECORDSEP);	
+	BOOST_CHECK(tokens[0]->getSymbol() == TokenSymbol::TK_RECORDSEP);
+	BOOST_CHECK(tokens[0]->getKind() == TokenInstruction::RECORDSEP);	
 	BOOST_CHECK(tokens[1]->getValue() == "\"\\r\\n\"");
-	BOOST_CHECK(tokens[1]->getSymbol() == "SEPARATOR");
-	BOOST_CHECK(tokens[1]->getKind() == Kind::RECORDSEP);
+	BOOST_CHECK(tokens[1]->getSymbol() == TokenSymbol::VALUE);
+	BOOST_CHECK(tokens[1]->getKind() == TokenInstruction::RECORDSEP);
 	BOOST_CHECK(result == true);
 	tokens.clear();
 	
@@ -394,11 +394,11 @@ BOOST_AUTO_TEST_CASE(processFieldsepTest)
 	result = processFieldsep(inst,tokens);
 	BOOST_CHECK(tokens.size() == 2);	
 	BOOST_CHECK(tokens[0]->getValue() == "FIELDSEP");
-	BOOST_CHECK(tokens[0]->getSymbol() == "FIELDSEP");
-	BOOST_CHECK(tokens[0]->getKind() == Kind::FIELDSEP);
+	BOOST_CHECK(tokens[0]->getSymbol() == TokenSymbol::TK_FIELDSEP);
+	BOOST_CHECK(tokens[0]->getKind() == TokenInstruction::FIELDSEP);
 	BOOST_CHECK(tokens[1]->getValue() == "\"\"");
-	BOOST_CHECK(tokens[1]->getSymbol() == "SEPARATOR");
-	BOOST_CHECK(tokens[1]->getKind() == Kind::FIELDSEP);
+	BOOST_CHECK(tokens[1]->getSymbol() == TokenSymbol::VALUE);
+	BOOST_CHECK(tokens[1]->getKind() == TokenInstruction::FIELDSEP);
 	BOOST_CHECK(result == true);
 	tokens.clear();
 	
@@ -426,14 +426,14 @@ BOOST_AUTO_TEST_CASE(processOutfieldtypesTest)
 	BOOST_CHECK(tokens.size() == 6);	
 	BOOST_CHECK(result == true);
 	BOOST_CHECK(tokens[0]->getValue() == "OUTFIELDTYPES");
-	BOOST_CHECK(tokens[0]->getSymbol() == "OUTFIELDTYPES");
-	BOOST_CHECK(tokens[0]->getKind() == Kind::OUTFIELDTYPES);
+	BOOST_CHECK(tokens[0]->getSymbol() == TokenSymbol::TK_OUTFIELDTYPES);
+	BOOST_CHECK(tokens[0]->getKind() == TokenInstruction::OUTFIELDTYPES);
 	BOOST_CHECK(tokens[2]->getValue() == "2");
-	BOOST_CHECK(tokens[2]->getSymbol() == "DUMMY");
-	BOOST_CHECK(tokens[2]->getKind() == Kind::OUTFIELDTYPES);
+	BOOST_CHECK(tokens[2]->getSymbol() == TokenSymbol::DUMMY);
+	BOOST_CHECK(tokens[2]->getKind() == TokenInstruction::OUTFIELDTYPES);
 	BOOST_CHECK(tokens[3]->getValue() == "\" \"");
-	BOOST_CHECK(tokens[3]->getSymbol() == "DUMMY");
-	BOOST_CHECK(tokens[3]->getKind() == Kind::OUTFIELDTYPES);
+	BOOST_CHECK(tokens[3]->getSymbol() == TokenSymbol::VALUE);
+	BOOST_CHECK(tokens[3]->getKind() == TokenInstruction::OUTFIELDTYPES);
 	tokens.clear();
 
 	//test false cause wrong start	

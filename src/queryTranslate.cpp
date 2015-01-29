@@ -6,7 +6,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "queryTranslate.h"
-#include "token.h"
+//#include "token.h"
 
 
 bool acceptMaintable(const std::string& input){
@@ -87,10 +87,10 @@ bool processMaintable(const std::string& instruction, std::vector<boost::shared_
 	if (result) {
 		std::string ident(what[1].first, what[1].second);
 		std::string value(what[2].first, what[2].second);
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "MAINTABLE", "MAINTABLE", Kind::FROM));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "MAINTABLE", TokenSymbol::TK_MAINTABLE, TokenInstruction::FROM));
 		tokens.push_back(tokenReservedWord);
 		boost::trim(value);
-		boost::shared_ptr<CToken> tokenIden(new CToken(0, value, "IDENTIFIER", Kind::FROM));
+		boost::shared_ptr<CToken> tokenIden(new CToken(0, value, TokenSymbol::TNAME, TokenInstruction::FROM));
 		tokens.push_back(tokenIden);
 		return true;
 	}
@@ -106,7 +106,7 @@ bool processOutfields(const std::string& instruction, std::vector<boost::shared_
 	boost::regex e(";");
     boost::sregex_token_iterator i(instruction.begin(), instruction.end(), e, -1);
     boost::sregex_token_iterator j;
-    unsigned count = 0;
+    int count = 0;
     while(i != j)
     {
 		//std::cout << *i << std::endl;
@@ -125,7 +125,7 @@ bool processOutfields(const std::string& instruction, std::vector<boost::shared_
 	boost::match_flag_type flags = boost::match_default;
 	if (boost::regex_match(start,end,what,firstRegex,flags)){
 		tables[0] = what[2];
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "OUTFIELDS", "OUTFIELDS", Kind::SELECT));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "OUTFIELDS", TokenSymbol::TK_OUTFIELDS, TokenInstruction::SELECT));
 		tokens.push_back(tokenReservedWord);
 		result = true;
 	} else return false;
@@ -147,7 +147,7 @@ bool processOutfields(const std::string& instruction, std::vector<boost::shared_
 		if (count1 != 2) return false; // should be a table name and several fields
 		//second, save table name into a token
 		boost::trim(insPart[0]);
-		boost::shared_ptr<CToken> tableName(new CToken(0, insPart[0], "TABLENAME", Kind::SELECT));
+		boost::shared_ptr<CToken> tableName(new CToken(0, insPart[0], TokenSymbol::TNAME, TokenInstruction::SELECT));
 		tokens.push_back(tableName);
 		//third, save field names
 		boost::regex instRegex (",");
@@ -158,7 +158,7 @@ bool processOutfields(const std::string& instruction, std::vector<boost::shared_
 			std::string aux = *i++;
 			boost::trim(aux);
 			//std::cout << aux << std::endl;
-			boost::shared_ptr<CToken> fieldName(new CToken(0, aux, "FIELDNAME", Kind::SELECT));
+			boost::shared_ptr<CToken> fieldName(new CToken(0, aux, TokenSymbol::FNAME, TokenInstruction::SELECT));
 			tokens.push_back(fieldName);
 			count2++;
 		}
@@ -180,7 +180,7 @@ bool processCondition(const std::string& instruction, std::vector<boost::shared_
 	boost::match_flag_type flags = boost::match_default;
 	if (boost::regex_match(instruction.begin(),instruction.end(),what,firstRegex,flags)){
 		condition = what[2];
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "CONDITION", "CONDITION", Kind::WHERE));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "CONDITION", TokenSymbol::TK_CONDITION, TokenInstruction::WHERE));
 		tokens.push_back(tokenReservedWord);
 		result = true;
 	} else return false; //return false if instruction does not begin with condition
@@ -238,23 +238,23 @@ bool processCondition(const std::string& instruction, std::vector<boost::shared_
 			if (k > 0) { // save condition
 				std::string aux = opers[k-1]; // condition
 				boost::trim(aux);
-				boost::shared_ptr<CToken> tokenCondition(new CToken(0, aux, "CONDITION", Kind::WHERE));
+				boost::shared_ptr<CToken> tokenCondition(new CToken(0, aux, TokenSymbol::COND, TokenInstruction::WHERE));
 				tokens.push_back(tokenCondition);
 			}
 			//save field name
 			std::string aux = whatOpe[1]; // field submatch
 			boost::trim(aux);
-			boost::shared_ptr<CToken> tokenFiledName(new CToken(0, aux, "FIELDNAME", Kind::WHERE));
+			boost::shared_ptr<CToken> tokenFiledName(new CToken(0, aux, TokenSymbol::FNAME, TokenInstruction::WHERE));
 			tokens.push_back(tokenFiledName);
 			//save operator
 			aux = whatOpe[2]; // operator submatch
 			boost::trim(aux);
-			boost::shared_ptr<CToken> tokenOperator(new CToken(0, aux, "OPERATOR", Kind::WHERE));
+			boost::shared_ptr<CToken> tokenOperator(new CToken(0, aux, TokenSymbol::BOOLOPE, TokenInstruction::WHERE));
 			tokens.push_back(tokenOperator);
 			//save parameter for use after
 			aux = whatOpe[3]; // parameter submatch
 			boost::trim(aux);
-			boost::shared_ptr<CToken> tokenParameter(new CToken(0, aux, "PARAMETER", Kind::WHERE));
+			boost::shared_ptr<CToken> tokenParameter(new CToken(0, aux, TokenSymbol::PARAM, TokenInstruction::WHERE));
 			tokens.push_back(tokenParameter);
 			result = true;
 		} else {
@@ -272,7 +272,7 @@ bool processJoinlist(const std::string& instruction, std::vector<boost::shared_p
 	boost::match_results<std::string::const_iterator> what;
 	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){		
 		joinGroups = what[2];
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "JOINLIST", "JOINLIST", Kind::JOIN));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "JOINLIST", TokenSymbol::TK_JOINLIST, TokenInstruction::JOIN));
 		tokens.push_back(tokenReservedWord);		
 	} else return false; //return false if instruction does not begin with joinlist
 	
@@ -300,7 +300,7 @@ bool processJoinlist(const std::string& instruction, std::vector<boost::shared_p
 					    tokens.clear();
 					    return false; // first fieldname
 				  }
-				  boost::shared_ptr<CToken> tokenParameter(new CToken(0, aux, "FIELDNAME", Kind::JOIN));
+				  boost::shared_ptr<CToken> tokenParameter(new CToken(0, aux, TokenSymbol::FNAME, TokenInstruction::JOIN));
 				  tokens.push_back(tokenParameter);
 			}
 			else if (pair == 1){
@@ -313,11 +313,11 @@ bool processJoinlist(const std::string& instruction, std::vector<boost::shared_p
 					  std::string value = *m++;
 					  boost::trim(value);
 					  if (elems == 0){
-						    boost::shared_ptr<CToken> tokenParameter(new CToken(0, value, "TABLENAME", Kind::JOIN));
+						  boost::shared_ptr<CToken> tokenParameter(new CToken(0, value, TokenSymbol::TNAME, TokenInstruction::JOIN));
 						    tokens.push_back(tokenParameter);
 					  }
 					  else if (elems == 1){
-						    boost::shared_ptr<CToken> tokenParameter(new CToken(0, value, "FIELDNAME", Kind::JOIN));
+						  boost::shared_ptr<CToken> tokenParameter(new CToken(0, value, TokenSymbol::FNAME, TokenInstruction::JOIN));
 						    tokens.push_back(tokenParameter);
 					  }
 					  else return false; // no more than two values in a group
@@ -341,10 +341,10 @@ bool processStartsep(const std::string& instruction, std::vector<boost::shared_p
 	boost::regex reservedWordRegex ("^((?i)STARTSEP)\\s+(\".*\")");
 	boost::match_results<std::string::const_iterator> what;
 	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "STARTSEP", "STARTSEP", Kind::STARTSEP));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "STARTSEP", TokenSymbol::TK_STARTSEP, TokenInstruction::STARTSEP));
 		tokens.push_back(tokenReservedWord);
 		std::string sep = what[2];
-		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, "SEPARATOR", Kind::STARTSEP));
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, TokenSymbol::VALUE, TokenInstruction::STARTSEP));
 		tokens.push_back(tokenSeparator);
 		return true;  
 	} else return false; //return false if instruction does not begin with startsep	  
@@ -355,10 +355,10 @@ bool processRecordsep(const std::string& instruction, std::vector<boost::shared_
 	boost::regex reservedWordRegex ("^((?i)RECORDSEP)\\s+(\".*\")");
 	boost::match_results<std::string::const_iterator> what;
 	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "RECORDSEP", "RECORDSEP", Kind::RECORDSEP));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "RECORDSEP", TokenSymbol::TK_RECORDSEP, TokenInstruction::RECORDSEP));
 		tokens.push_back(tokenReservedWord);
 		std::string sep = what[2];
-		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, "SEPARATOR", Kind::RECORDSEP));
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, TokenSymbol::VALUE, TokenInstruction::RECORDSEP));
 		tokens.push_back(tokenSeparator);
 		return true;  
 	} else return false; //return false if instruction does not begin with startsep
@@ -369,10 +369,10 @@ bool processFieldsep(const std::string& instruction, std::vector<boost::shared_p
 	boost::regex reservedWordRegex ("^((?i)FIELDSEP)\\s+(\".*\")");
 	boost::match_results<std::string::const_iterator> what;
 	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "FIELDSEP", "FIELDSEP", Kind::FIELDSEP));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "FIELDSEP", TokenSymbol::TK_FIELDSEP, TokenInstruction::FIELDSEP));
 		tokens.push_back(tokenReservedWord);
 		std::string sep = what[2];
-		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, "SEPARATOR", Kind::FIELDSEP));
+		boost::shared_ptr<CToken> tokenSeparator(new CToken(0, sep, TokenSymbol::VALUE, TokenInstruction::FIELDSEP));
 		tokens.push_back(tokenSeparator);
 		return true;  
 	} else return false; //return false if instruction does not begin with startsep
@@ -385,7 +385,7 @@ bool processOutfieldtypes(const std::string& instruction, std::vector<boost::sha
 	boost::match_results<std::string::const_iterator> what;
 	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
 		typesStr = what[2];	
-		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "OUTFIELDTYPES", "OUTFIELDTYPES", Kind::OUTFIELDTYPES));
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "OUTFIELDTYPES", TokenSymbol::TK_OUTFIELDTYPES, TokenInstruction::OUTFIELDTYPES));
 		tokens.push_back(tokenReservedWord);			
 	} else return false; //return false if instruction does not begin with startsep
 	
@@ -400,14 +400,14 @@ bool processOutfieldtypes(const std::string& instruction, std::vector<boost::sha
 		std::string type = *i++;
 		boost::trim(type);
 		if (type.find("RAW") != std::string::npos) {
-			boost::shared_ptr<CToken> tokenType(new CToken(0, boost::lexical_cast<std::string>(count), "RAW", Kind::OUTFIELDTYPES));
+			boost::shared_ptr<CToken> tokenType(new CToken(0, boost::lexical_cast<std::string>(count), TokenSymbol::RAW, TokenInstruction::OUTFIELDTYPES));
 			tokens.push_back(tokenType);			
 		} else if (type.find("DUMMY") != std::string::npos && type.find("\"") != std::string::npos && type.back() == '"') {
-			int firstQuote = type.find("\"");
+			size_t firstQuote = type.find("\"");
 			std::string value = type.substr(firstQuote,type.length());
-			boost::shared_ptr<CToken> tokenType(new CToken(0, boost::lexical_cast<std::string>(count), "DUMMY", Kind::OUTFIELDTYPES));
+			boost::shared_ptr<CToken> tokenType(new CToken(0, boost::lexical_cast<std::string>(count), TokenSymbol::DUMMY, TokenInstruction::OUTFIELDTYPES));
 			tokens.push_back(tokenType);
-			boost::shared_ptr<CToken> tokenTypeValue(new CToken(0, value, "DUMMY", Kind::OUTFIELDTYPES));
+			boost::shared_ptr<CToken> tokenTypeValue(new CToken(0, value, TokenSymbol::VALUE, TokenInstruction::OUTFIELDTYPES));
 			tokens.push_back(tokenTypeValue);			
 		}
 		else {
