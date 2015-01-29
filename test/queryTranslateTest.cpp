@@ -415,4 +415,34 @@ BOOST_AUTO_TEST_CASE(processFieldsepTest)
 	BOOST_CHECK(result == false);
 }
 
+BOOST_AUTO_TEST_CASE(processOutfieldtypesTest)
+{
+	bool result;
+	
+	//test true with valid start
+	std::vector<boost::shared_ptr<CToken>> tokens;
+	std::string inst = "OUTFIELDTYPES RAW;DUMMY \" \";DUMMY \"    \"";
+	result = processOutfieldtypes(inst,tokens);
+	BOOST_CHECK(tokens.size() == 6);	
+	BOOST_CHECK(result == true);
+	BOOST_CHECK(tokens[0]->getValue() == "OUTFIELDTYPES");
+	BOOST_CHECK(tokens[0]->getSymbol() == "OUTFIELDTYPES");
+	BOOST_CHECK(tokens[0]->getKind() == Kind::OUTFIELDTYPES);
+	BOOST_CHECK(tokens[2]->getValue() == "2");
+	BOOST_CHECK(tokens[2]->getSymbol() == "DUMMY");
+	BOOST_CHECK(tokens[2]->getKind() == Kind::OUTFIELDTYPES);
+	BOOST_CHECK(tokens[3]->getValue() == "\" \"");
+	BOOST_CHECK(tokens[3]->getSymbol() == "DUMMY");
+	BOOST_CHECK(tokens[3]->getKind() == Kind::OUTFIELDTYPES);
+	tokens.clear();
+
+	//test false cause wrong start	
+	inst = "OUTFIELDTYPESCACHOND RAW;DUMMY \" \";DUMMY \"    \"";
+	result = processOutfieldtypes(inst,tokens);
+	BOOST_CHECK(tokens.empty());	
+	BOOST_CHECK(result == false);
+	tokens.clear();
+}
+
+
 BOOST_AUTO_TEST_SUITE_END()

@@ -1,7 +1,9 @@
 //#include <iostream>
+//#include <string>
 #include <boost/regex.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "queryTranslate.h"
 #include "token.h"
@@ -374,4 +376,46 @@ bool processFieldsep(const std::string& instruction, std::vector<boost::shared_p
 		tokens.push_back(tokenSeparator);
 		return true;  
 	} else return false; //return false if instruction does not begin with startsep
+}
+
+bool processOutfieldtypes(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+{
+	std::string typesStr;	
+	boost::regex reservedWordRegex ("((?i)OUTFIELDTYPES)\\s+(.*)");
+	boost::match_results<std::string::const_iterator> what;
+	if (boost::regex_match(instruction.begin(),instruction.end(),what,reservedWordRegex)){	
+		typesStr = what[2];	
+		boost::shared_ptr<CToken> tokenReservedWord(new CToken(0, "OUTFIELDTYPES", "OUTFIELDTYPES", Kind::OUTFIELDTYPES));
+		tokens.push_back(tokenReservedWord);			
+	} else return false; //return false if instruction does not begin with startsep
+	
+	std::vector<std::string> types;
+	boost::regex typeExp(";");
+	boost::trim(typesStr);
+	boost::sregex_token_iterator i(typesStr.begin(), typesStr.end(), typeExp, -1);
+	boost::sregex_token_iterator j;
+	int count = 1;
+	while (i != j)
+	{
+		std::string type = *i++;
+		boost::trim(type);
+		if (type.find("RAW") != std::string::npos) {
+			boost::shared_ptr<CToken> tokenType(new CToken(0, boost::lexical_cast<std::string>(count), "RAW", Kind::OUTFIELDTYPES));
+			tokens.push_back(tokenType);			
+		} else if (type.find("DUMMY") != std::string::npos && type.find("\"") != std::string::npos && type.back() == '"') {
+			int firstQuote = type.find("\"");
+			std::string value = type.substr(firstQuote,type.length());
+			boost::shared_ptr<CToken> tokenType(new CToken(0, boost::lexical_cast<std::string>(count), "DUMMY", Kind::OUTFIELDTYPES));
+			tokens.push_back(tokenType);
+			boost::shared_ptr<CToken> tokenTypeValue(new CToken(0, value, "DUMMY", Kind::OUTFIELDTYPES));
+			tokens.push_back(tokenTypeValue);			
+		}
+		else {
+			// types should be RAW or DUMMY with ""
+			tokens.clear();
+			return false; 
+		}
+		count++; //counts outfields
+	}
+	return true;
 }

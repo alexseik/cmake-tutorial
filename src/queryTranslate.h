@@ -43,4 +43,6 @@ bool processRecordsep(const std::string&, std::vector<boost::shared_ptr<CToken>>
 
 bool processFieldsep(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
 
+bool processOutfieldtypes(const std::string&, std::vector<boost::shared_ptr<CToken>>&);
+
 #endif
