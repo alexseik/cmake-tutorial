@@ -2,7 +2,7 @@ find_package(Boost 1.56.0 COMPONENTS unit_test_framework REQUIRED)
 
 include_directories (${TEST_SOURCE_DIR}/src ${Boost_INCLUDE_DIRS})
 
-add_definitions (-DBOOST_TEST_DYN_LINK)
+#add_definitions (-DBOOST_TEST_DYN_LINK)
 
 add_executable (TestSqr test.cpp )
 add_executable (TestQueryTranslate queryTranslateTest.cpp)

@@ -8,11 +8,19 @@ endif()
 
 include_directories (${Boost_INCLUDE_DIRS})
 #link_directories(${BOOST_INCLUDE_DIRS})
+include (GenerateExportHeader)
 
-add_definitions (-DBOOST_REGEX_DYN_LINK)
+#add_definitions (-DBOOST_REGEX_DYN_LINK)
 
 add_library (Sqr sqr.cpp sqr.h)
-add_library (QueryTranslate queryTranslate.cpp queryTranslate.h token.h tokenType.h)
+
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+
+add_library (QueryTranslate ${LIB_TYPE} queryTranslate.cpp queryTranslate.h token.h tokenType.h etx2Sql.cpp etx2Sql.h)
+
+GENERATE_EXPORT_HEADER( QueryTranslate )
+
 target_link_libraries(QueryTranslate ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_REGEX_LIBRARY})
 
 

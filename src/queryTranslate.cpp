@@ -9,61 +9,62 @@
 //#include "token.h"
 
 
-bool acceptMaintable(const std::string& input){
+
+EXTERNAL ETX2SQL_EXPORT bool acceptMaintable(const std::string& input){
     static const boost::regex e("MAINTABLE");
     return boost::regex_match(input, e);
 }
 
-bool acceptOutfields(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptOutfields(const std::string& input){
     static const boost::regex e("OUTFIELDS");
     return boost::regex_match(input, e);
 }
 
-bool acceptJoinList(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptJoinList(const std::string& input){
     static const boost::regex e("JOINLIST");
     return boost::regex_match(input, e);
 }
 
-bool acceptCondition(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptCondition(const std::string& input){
     static const boost::regex e("CONDITION");
     return boost::regex_match(input, e);
 }
 
-bool acceptOutfieldtypes(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptOutfieldtypes(const std::string& input){
     static const boost::regex e("OUTFIELDTYPES");
     return boost::regex_match(input, e);
 }
 
-bool acceptStartsep(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptStartsep(const std::string& input){
     static const boost::regex e("STARTSEP");
     return boost::regex_match(input, e);
 }
 
-bool acceptMaxrecnum(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptMaxrecnum(const std::string& input){
     static const boost::regex e("MAXRECNUM");
     return boost::regex_match(input, e);
 }
 
-bool acceptFieldsep(const std::string& input){
+EXTERNAL ETX2SQL_EXPORT bool acceptFieldsep(const std::string& input){
     static const boost::regex e("FIELDSEP");
     return boost::regex_match(input, e);
 }
 
-bool isSeparator(char input){
+EXTERNAL ETX2SQL_EXPORT bool isSeparator(char input){
 	std::string aux;
 	aux = aux + input;
 	static const boost::regex sep("[,;:]|[[:blank:]]");
 	return boost::regex_match(aux, sep);
 }
 
-bool isInstructionSeparator(char input){
+EXTERNAL ETX2SQL_EXPORT bool isInstructionSeparator(char input){
 	std::string aux;
 	aux = aux + input;
 	static const boost::regex sep("[[.vertical-line.]]|[[.newline.]]");
 	return boost::regex_match(aux, sep);
 }
 
-std::vector<std::string> getInstructions(std::string& input){
+EXTERNAL_CPP ETX2SQL_EXPORT std::vector<std::string> getInstructions(std::string& input){
 	std::vector<std::string> aux;
 	boost::regex re ("\\||(\\n|\\r\\n)");
 	boost::sregex_token_iterator i (input.begin(),input.end(),re,-1);
@@ -78,7 +79,7 @@ std::vector<std::string> getInstructions(std::string& input){
 	return 	aux;
 }
 
-bool processMaintable(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processMaintable(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	boost::regex re ("((?i)MAINTABLE)(\\s+\\w+(.DAT)?)");
 	boost::smatch what;
@@ -97,7 +98,7 @@ bool processMaintable(const std::string& instruction, std::vector<boost::shared_
 	return false;
 }
 
-bool processOutfields(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processOutfields(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	std::vector<std::string> tables;
 	bool result = false;
@@ -168,7 +169,7 @@ bool processOutfields(const std::string& instruction, std::vector<boost::shared_
 	return result;
 }
 
-bool processCondition(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processCondition(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	bool result = false;
 	std::string condition;
@@ -265,7 +266,7 @@ bool processCondition(const std::string& instruction, std::vector<boost::shared_
 	return result;
 }
 
-bool processJoinlist(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processJoinlist(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {		
 	std::string joinGroups;	
 	boost::regex reservedWordRegex ("^((?i)JOINLIST)\\s+(.*)");
@@ -336,7 +337,7 @@ bool processJoinlist(const std::string& instruction, std::vector<boost::shared_p
 	return true;
 }
 
-bool processStartsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processStartsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	boost::regex reservedWordRegex ("^((?i)STARTSEP)\\s+(\".*\")");
 	boost::match_results<std::string::const_iterator> what;
@@ -350,7 +351,7 @@ bool processStartsep(const std::string& instruction, std::vector<boost::shared_p
 	} else return false; //return false if instruction does not begin with startsep	  
 }
 
-bool processRecordsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processRecordsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	boost::regex reservedWordRegex ("^((?i)RECORDSEP)\\s+(\".*\")");
 	boost::match_results<std::string::const_iterator> what;
@@ -364,7 +365,7 @@ bool processRecordsep(const std::string& instruction, std::vector<boost::shared_
 	} else return false; //return false if instruction does not begin with startsep
 }
 
-bool processFieldsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processFieldsep(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	boost::regex reservedWordRegex ("^((?i)FIELDSEP)\\s+(\".*\")");
 	boost::match_results<std::string::const_iterator> what;
@@ -378,7 +379,7 @@ bool processFieldsep(const std::string& instruction, std::vector<boost::shared_p
 	} else return false; //return false if instruction does not begin with startsep
 }
 
-bool processOutfieldtypes(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processOutfieldtypes(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	std::string typesStr;	
 	boost::regex reservedWordRegex ("((?i)OUTFIELDTYPES)\\s+(.*)");
@@ -420,7 +421,7 @@ bool processOutfieldtypes(const std::string& instruction, std::vector<boost::sha
 	return true;
 }
 
-bool processMaxrecnum(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
+EXTERNAL ETX2SQL_EXPORT bool processMaxrecnum(const std::string& instruction, std::vector<boost::shared_ptr<CToken>>& tokens)
 {
 	boost::regex reservedWordRegex ("^((?i)MAXRECNUM)\\s+(\\d*)");
 	boost::match_results<std::string::const_iterator> what;
