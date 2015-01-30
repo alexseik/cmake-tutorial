@@ -4,6 +4,13 @@ if(${Boost_FOUND})
     message("Boost encontrado! - ${Boost_INCLUDE_DIRS}")
 endif()
 
+OPTION(BUILD_SHARED_LIBS "Build Shared Libraries" OFF)
+SET (LIB_TYPE STATIC)
+IF (BUILD_SHARED_LIBS)
+	SET (LIB_TYPE SHARED)
+	ADD_DEFINITIONS(-DQueryTranslate_SHARED)
+ENDIF (BUILD_SHARED_LIBS)
+
 #MESSAGE("${BOOST_INCLUDE_DIRS}")
 
 include_directories (${Boost_INCLUDE_DIRS})

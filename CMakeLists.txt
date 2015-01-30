@@ -1,13 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 project (TEST)
 
-OPTION(BUIL_SHARED_LIBS "Build Shared Libraries" OFF)
-SET (LIB_TYPE STATIC)
-IF (BUILD_SHARED_LIBS)
-	SET (LIB_TYPE SHARED)
-	ADD_DEFINITIONS(-DQueryTranslate_SHARED)
-ENDIF (BUILD_SHARED_LIBS)
-
 
 if (UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
